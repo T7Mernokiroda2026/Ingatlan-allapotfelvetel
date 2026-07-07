@@ -74,6 +74,14 @@
   .new-project{border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--field);}
   .new-project h3{margin:0 0 12px;color:var(--accent-dark);font-size:1.05rem;}
   .new-project select{width:100%;padding:11px 12px;border-radius:8px;border:1.5px solid var(--line-strong);background:var(--surface);font:inherit;min-height:46px;}
+  .np-staff{margin-top:4px;}
+  .staff-block{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--surface);}
+  .staff-block .party-label{margin-bottom:8px;}
+  .sig-label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin:6px 0 5px;}
+  .wsign{margin:4px 0 14px;}
+  .wsign .wsign-name-label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:3px;}
+  .wsign img.wsign-img{display:block;max-width:100%;max-height:150px;background:#fff;border:1.5px solid var(--line-strong);border-radius:var(--radius);margin-top:6px;padding:4px;}
+  .wsign .wsign-none{font-size:.85rem;color:var(--muted);font-style:italic;margin-top:6px;}
 
   /* ---------- Statistics view ---------- */
   .stats-totals{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;}
@@ -165,6 +173,21 @@
   .chip-other{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .chip-other input{width:auto;flex:1;min-width:150px;min-height:42px;}
 
+  /* ---------- Többértékű legördülő lista (details) ---------- */
+  .dropdown{border:1.5px solid var(--line-strong);border-radius:10px;background:var(--field);margin-bottom:14px;}
+  .dropdown[open]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  .dd-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;min-height:46px;user-select:none;}
+  .dd-summary::-webkit-details-marker{display:none;}
+  .dd-text{color:var(--ink);overflow-wrap:anywhere;}
+  .dd-text.is-empty{color:#9AA8B6;}
+  .dd-caret{flex:0 0 auto;color:var(--muted);transition:transform .15s;}
+  .dropdown[open] .dd-caret{transform:rotate(180deg);}
+  .dd-panel{border-top:1px solid var(--line);padding:6px;display:flex;flex-direction:column;gap:2px;}
+  .dd-opt{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;font-size:.95rem;}
+  .dd-opt:hover{background:var(--accent-soft);}
+  .dd-opt input{width:18px;height:18px;flex:0 0 auto;min-height:0;margin:0;}
+  .dd-egyeb-input{margin:6px 4px 2px;width:calc(100% - 8px);}
+
   /* ---------- Photo ---------- */
   .photo-zone{
     border:2px dashed var(--line-strong);border-radius:var(--radius);
@@ -190,9 +213,12 @@
   .photo-card{border:1.5px solid var(--line);border-radius:var(--radius);padding:14px;background:var(--field);position:relative;break-inside:avoid;}
   .photo-card .card-no{position:absolute;top:-10px;left:14px;background:var(--accent);color:#fff;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:6px;}
   .photo-card .del-row{position:absolute;top:10px;right:10px;}
+  .photo-card .pc-actions{margin-top:2px;}
+  .photo-card .pc-actions .retake-row{font-size:.85rem;padding:6px 10px;}
   .photo-card .pc-grid{display:grid;grid-template-columns:170px 1fr;gap:14px;margin-top:8px;}
   @media (max-width:560px){.photo-card .pc-grid{grid-template-columns:1fr;}}
   .photo-card img.shot{width:100%;border-radius:var(--radius);border:1px solid var(--line);background:#fff;display:block;}
+  .photo-card .desc-print{display:none;}
   .gps-line{font-size:.8rem;color:var(--muted);margin:0 0 10px;}
   .gps-line code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);font-size:.82rem;}
 
@@ -207,6 +233,8 @@
 
   /* ---------- Canvas (sketch / signature) ---------- */
   .canvas-wrap{position:relative;border:1.5px solid var(--line-strong);border-radius:var(--radius);background:#fff;overflow:hidden;touch-action:none;}
+  .canvas-wrap.sign-half{max-width:50%;min-width:200px;}
+  @media (max-width:620px){.canvas-wrap.sign-half{max-width:70%;}}
   canvas{display:block;width:100%;touch-action:none;}
   .canvas-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;}
   .hint{color:var(--muted);font-size:.85rem;margin:0 0 10px;}
@@ -294,6 +322,34 @@
     .sheet{box-shadow:none;border:none;max-width:none;border-radius:0;}
     .actionbar,.fs-overlay,.canvas-tools,.add-btn,.del-row,.no-print{display:none !important;}
     section{break-inside:avoid;border-top:1px solid #999;}
+    /* magyarázó/segéd szövegek ne kerüljenek a dokumentumba (Word-rel azonos tartalom) */
+    .hint{display:none !important;}
+    /* 3. pont: a „Fotók készítése" alatti bevezető rész ne jelenjen meg — az „Eddig készült fotók:" sortól kezdődjön */
+    #photoSection .photo-bar,#photoSection .field-note{display:none !important;}
+    /* Legördülő listák nyomtatásban: csak a kiválasztott értékek szövege látszik */
+    .dropdown{border:none !important;background:none !important;box-shadow:none !important;margin-bottom:6px;}
+    .dropdown .dd-panel,.dropdown .dd-caret{display:none !important;}
+    .dd-summary{padding:0 !important;min-height:0 !important;}
+    .dd-text{font-weight:600;}
+    .dd-text.is-empty{color:#666;font-weight:400;}
+    /* Fotók a nyomtatásban/PDF-ben: MINDEN fotó megjelenik, oldalanként kettő, nagy méretben */
+    #photoSection{break-inside:auto;}
+    #photoList{display:block !important;}
+    /* ha vannak fotók: külön oldalon kezdődjenek, így tiszta a „oldalanként 2" tördelés */
+    body.print-has-photos #photoList{break-before:page;page-break-before:always;}
+    #photoList .photo-card{
+      display:block !important;background:#fff;border:1px solid #999;margin:0 0 6mm;padding:5mm 5mm 4mm;
+      break-inside:avoid;page-break-inside:avoid;box-sizing:border-box;
+    }
+    #photoList .photo-card:nth-of-type(2n){page-break-after:always;}
+    #photoList .photo-card:last-child{page-break-after:auto;}
+    #photoList .photo-card .pc-grid{display:block !important;grid-template-columns:none !important;margin-top:2mm;}
+    #photoList .photo-card img.shot{
+      display:block;margin:0 auto 3mm;width:auto;max-width:100%;max-height:105mm;object-fit:contain;
+    }
+    #photoList .photo-card textarea{display:none !important;}
+    #photoList .photo-card .desc-print{display:block;font-size:10.5pt;line-height:1.4;white-space:pre-wrap;color:#172430;}
+    #photoList .photo-card .gps-line{font-size:9pt;}
     input,textarea,select{background:#fff !important;border:1px solid #999 !important;box-shadow:none !important;}
     .sketch-trigger{border:1px solid #999;min-height:0;break-inside:avoid;page-break-inside:avoid;}
     .sketch-trigger img{width:auto;max-width:100%;max-height:160mm;display:block;margin:0 auto;}
@@ -317,7 +373,7 @@
 <div id="projectView" class="view">
   <div class="sheet hub">
     <header class="doc">
-      <span class="version">v1.0.7</span>
+      <span class="version">v1.2.0</span>
       <div class="company">T7 Mérnökiroda Kft.<small>2141 Csömör, Sármány u. 16.</small></div>
       <img class="logo" id="hubLogo" alt="T7 Mérnökiroda Kft.">
     </header>
@@ -326,6 +382,14 @@
       <p class="hint">Válasszon egy meglévő projektet a folytatáshoz, vagy hozzon létre újat. A projekt alapadatai minden új házszámnál automatikusan megjelennek az űrlap tetején.</p>
 
       <div id="projectList" class="project-list"></div>
+
+      <h2 class="hub-title" style="font-size:1.15rem">Mentett jegyzőkönyvek</h2>
+      <p class="hint">A korábban mentett (folytatható) jegyzőkönyvek — fotókkal, rajzokkal, aláírásokkal együtt. Nyissa meg a folytatáshoz, vagy töltsön be egy exportált fájlt.</p>
+      <div class="pb-actions-grp" style="margin:4px 0 8px">
+        <button type="button" id="importFileBtn">⬆️ Betöltés fájlból (.json)</button>
+        <input type="file" id="importFileInput" accept="application/json,.json" style="display:none">
+      </div>
+      <div id="draftList" class="project-list"></div>
 
       <div class="new-project">
         <h3>➕ Új projekt</h3>
@@ -354,6 +418,33 @@
             <option value="külső és belső">külső és belső</option>
           </select>
         </label>
+
+        <div class="np-staff">
+          <label class="fld">
+            <span>Állapotfelmérést végző munkatársak száma</span>
+            <select id="np_staffCount">
+              <option value="1">1 fő</option>
+              <option value="2">2 fő</option>
+            </select>
+          </label>
+
+          <div class="staff-block" id="np_staff1">
+            <span class="party-label">1. munkatárs</span>
+            <label class="fld"><span>Név</span><input type="text" id="np_staff1_name" placeholder="Munkatárs neve"></label>
+            <span class="sig-label">Aláírás (egyszer, itt megadva — a jegyzőkönyvekbe automatikusan bekerül)</span>
+            <div class="canvas-wrap"><canvas id="np_staff1_sig"></canvas></div>
+            <div class="canvas-tools no-print"><button type="button" class="danger" id="np_staff1_clear">Aláírás törlése</button></div>
+          </div>
+
+          <div class="staff-block" id="np_staff2" style="display:none">
+            <span class="party-label">2. munkatárs</span>
+            <label class="fld"><span>Név</span><input type="text" id="np_staff2_name" placeholder="Munkatárs neve"></label>
+            <span class="sig-label">Aláírás</span>
+            <div class="canvas-wrap"><canvas id="np_staff2_sig"></canvas></div>
+            <div class="canvas-tools no-print"><button type="button" class="danger" id="np_staff2_clear">Aláírás törlése</button></div>
+          </div>
+        </div>
+
         <button type="button" class="primary" id="np_create" style="margin-top:6px">Létrehozás és kitöltés indítása →</button>
       </div>
     </div>
@@ -366,7 +457,7 @@
 
   <!-- HEADER -->
   <header class="doc">
-    <span class="version">v1.0.7</span>
+    <span class="version">v1.2.0</span>
     <div class="company">
       T7 Mérnökiroda Kft.
       <small>2141 Csömör, Sármány u. 16.</small>
@@ -438,60 +529,50 @@
   <section>
     <div class="sec-head"><span class="sec-num">2.</span><span class="sec-title">A dokumentációval rögzített épületre / építményre vonatkozó adatok</span></div>
 
-    <label class="fld">
-      <span>Utcafronti homlokzat vázlatos képe</span>
-    </label>
-    <div class="sketch-trigger" id="facadeTrigger">
-      <div class="ph" id="facadePh"><div class="pi">✏️</div><strong>Koppintson a rajzoláshoz</strong><small>Ujjal vagy tollal rajzolhat; teljes képernyőn nyílik meg</small></div>
-      <img id="facadeThumb" alt="Utcafronti homlokzat vázlat" style="display:none">
-    </div>
-    <div class="canvas-tools no-print" id="facadeMini" style="display:none">
-      <button type="button" class="ghost" id="facadeEdit">Vázlat szerkesztése</button>
-      <button type="button" class="danger" id="facadeClearMini">Vázlat törlése</button>
-    </div>
-
     <!-- Building type -->
-    <label class="fld" style="margin-top:18px"><span>Épület jellege <em style="font-weight:400;color:#9AA8B6">(több is választható)</em></span></label>
-    <div class="chips" id="epuletJellege">
-      <span class="chip" data-val="Családi ház" role="button" aria-pressed="false"><span class="box"></span>Családi ház</span>
-      <span class="chip" data-val="Lakás" role="button" aria-pressed="false"><span class="box"></span>Lakás</span>
-      <span class="chip" data-val="Melléképület" role="button" aria-pressed="false"><span class="box"></span>Melléképület</span>
-      <span class="chip" data-val="Társasház" role="button" aria-pressed="false"><span class="box"></span>Társasház</span>
-      <span class="chip" data-val="Iroda / irodaház" role="button" aria-pressed="false"><span class="box"></span>Iroda / irodaház</span>
-      <span class="chip" data-val="Üzlet, ipari épület / raktár" role="button" aria-pressed="false"><span class="box"></span>Üzlet, ipari épület / raktár</span>
-      <span class="chip" data-val="Intézmény (oktatási, e.ü., hivatal stb.)" role="button" aria-pressed="false"><span class="box"></span>Intézmény (oktatási, e.ü., hivatal)</span>
-      <span class="chip" data-val="Szálló" role="button" aria-pressed="false"><span class="box"></span>Szálló</span>
-    </div>
-    <div class="chip-other" style="margin-top:10px">
-      <span class="chip" data-val="Egyéb" role="button" aria-pressed="false"><span class="box"></span>Egyéb</span>
-      <input type="text" placeholder="Egyéb épülettípus megnevezése">
-    </div>
+    <label class="fld"><span>Épület jellege <em style="font-weight:400;color:#9AA8B6">(több is választható)</em></span></label>
+    <details class="dropdown" id="epuletJellege">
+      <summary class="dd-summary"><span class="dd-text" data-ph="— válasszon —">— válasszon —</span><span class="dd-caret">▾</span></summary>
+      <div class="dd-panel">
+        <label class="dd-opt"><input type="checkbox" value="Családi ház"><span>Családi ház</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Lakás"><span>Lakás</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Melléképület"><span>Melléképület</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Társasház"><span>Társasház</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Iroda / irodaház"><span>Iroda / irodaház</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Üzlet, ipari épület / raktár"><span>Üzlet, ipari épület / raktár</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Intézmény (oktatási, e.ü., hivatal stb.)"><span>Intézmény (oktatási, e.ü., hivatal stb.)</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Szálló"><span>Szálló</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Egyéb" class="dd-egyeb"><span>Egyéb</span></label>
+        <input type="text" id="epuletEgyebInput" class="dd-egyeb-input" placeholder="Egyéb épülettípus megnevezése" style="display:none">
+      </div>
+    </details>
 
     <!-- Facade covering -->
     <label class="fld" style="margin-top:20px"><span>Külső, homlokzati elemek burkolata <em style="font-weight:400;color:#9AA8B6">(több is választható)</em></span></label>
-    <div class="chips" id="burkolat">
-      <span class="chip" data-val="Dryvit szigetelési rendszer" role="button" aria-pressed="false"><span class="box"></span>Dryvit szigetelési rendszer</span>
-      <span class="chip" data-val="Kőpor vakolat" role="button" aria-pressed="false"><span class="box"></span>Kőpor vakolat</span>
-      <span class="chip" data-val="Mészfestés" role="button" aria-pressed="false"><span class="box"></span>Mészfestés</span>
-      <span class="chip" data-val="Simított vakolat" role="button" aria-pressed="false"><span class="box"></span>Simított vakolat</span>
-      <span class="chip" data-val="Fa burkolat" role="button" aria-pressed="false"><span class="box"></span>Fa burkolat</span>
-      <span class="chip" data-val="Kő burkolat" role="button" aria-pressed="false"><span class="box"></span>Kő burkolat</span>
-    </div>
-    <div class="chip-other" style="margin-top:10px">
-      <span class="chip" data-val="Egyéb" role="button" aria-pressed="false"><span class="box"></span>Egyéb</span>
-      <input type="text" placeholder="pl. klinker tégla">
-    </div>
+    <details class="dropdown" id="burkolat">
+      <summary class="dd-summary"><span class="dd-text" data-ph="— válasszon —">— válasszon —</span><span class="dd-caret">▾</span></summary>
+      <div class="dd-panel">
+        <label class="dd-opt"><input type="checkbox" value="Dryvit szigetelési rendszer"><span>Dryvit szigetelési rendszer</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Kőpor vakolat"><span>Kőpor vakolat</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Mészfestés"><span>Mészfestés</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Simított vakolat"><span>Simított vakolat</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Fa burkolat"><span>Fa burkolat</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Kő burkolat"><span>Kő burkolat</span></label>
+        <label class="dd-opt"><input type="checkbox" value="Egyéb" class="dd-egyeb"><span>Egyéb</span></label>
+        <input type="text" id="burkolatEgyebInput" class="dd-egyeb-input" placeholder="pl. klinker tégla" style="display:none">
+      </div>
+    </details>
 
     <!-- Building data -->
     <label class="fld" style="margin-top:20px"><span>Épület adatai</span></label>
     <div class="grid-3">
       <label class="fld">
         <span>Szintszáma</span>
-        <div class="with-unit"><input type="number" inputmode="numeric" min="0"><span class="unit">szint</span></div>
+        <div class="with-unit"><input type="number" id="szintInput" inputmode="numeric" min="0"><span class="unit">szint</span></div>
       </label>
       <label class="fld">
         <span>Alapterülete</span>
-        <div class="with-unit"><input type="number" inputmode="decimal" min="0"><span class="unit">m²</span></div>
+        <div class="with-unit"><input type="number" id="alapInput" inputmode="decimal" min="0"><span class="unit">m²</span></div>
       </label>
       <label class="fld">
         <span>Felvételi egység</span>
@@ -501,7 +582,7 @@
   </section>
 
   <!-- SECTION 3 — Fotók készítése -->
-  <section>
+  <section id="photoSection">
     <div class="sec-head"><span class="sec-num">3.</span><span class="sec-title">Fotók készítése</span></div>
     <p class="hint">Készítsen fotókat a helyszínen. Minden fotó sorszámot és — ha elérhető — GPS-koordinátát kap, és külön leírással látható el. A fotók a dokumentumba mentődnek, és a PDF-be/nyomtatásba is bekerülnek.</p>
 
@@ -557,24 +638,32 @@
   <section>
     <div class="sec-head"><span class="sec-num">✓</span><span class="sec-title">Állapotrögzítést végző munkatársak</span></div>
     <div class="sign-row">
-      <div class="sign-party">
+      <div class="sign-party" id="workerParty">
         <span class="party-label">Állapotrögzítést végző munkatárs(ak)</span>
-        <label class="fld">
-          <span>Név(ek)</span>
-          <input type="text" placeholder="Munkatárs(ak) neve">
-        </label>
-        <span class="fld" style="display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:5px;">Aláírás</span>
-        <div class="canvas-wrap" id="signWrap"><canvas id="signCanvas"></canvas></div>
-        <div class="canvas-tools no-print"><button type="button" class="danger" id="signClear">Aláírás törlése</button></div>
+        <div id="workerSigns"></div>
       </div>
       <div class="sign-party">
-        <span class="party-label">Tulajdonos / megbízott</span>
+        <label class="fld">
+          <span>Nyilatkozó minősége</span>
+          <select id="ownerRole">
+            <option value="Tulajdonos">Tulajdonos</option>
+            <option value="Meghatalmazott">Meghatalmazott</option>
+          </select>
+        </label>
         <label class="fld">
           <span>Név</span>
-          <input type="text" placeholder="Tulajdonos / megbízott neve">
+          <input type="text" id="ownerName" placeholder="Név">
         </label>
-        <span class="fld" style="display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:5px;">Aláírás</span>
-        <div class="canvas-wrap" id="ownerSignWrap"><canvas id="ownerSignCanvas"></canvas></div>
+        <label class="fld">
+          <span>Ingatlan állapotrögzítéséhez</span>
+          <select id="ownerConsent">
+            <option value="Hozzájárulok">Hozzájárulok</option>
+            <option value="Részlegesen járulok hozzá">Részlegesen járulok hozzá</option>
+            <option value="Nem járulok hozzá">Nem járulok hozzá</option>
+          </select>
+        </label>
+        <span class="sig-label">Aláírás</span>
+        <div class="canvas-wrap sign-half" id="ownerSignWrap"><canvas id="ownerSignCanvas"></canvas></div>
         <div class="canvas-tools no-print"><button type="button" class="danger" id="ownerSignClear">Aláírás törlése</button></div>
       </div>
     </div>
@@ -585,6 +674,8 @@
 <!-- ACTION BAR -->
 <div class="actionbar no-print">
   <button type="button" class="primary" id="printBtn">💾 Mentés PDF / Word</button>
+  <button type="button" id="saveDraftBtn">💾 Mentés (folytatható)</button>
+  <button type="button" id="exportFileBtn">⬇️ Exportálás fájlba</button>
   <button type="button" class="danger" id="resetBtn">➕ Új házszám</button>
 </div>
 </div><!-- /formView -->
@@ -593,7 +684,7 @@
 <div id="statsView" class="view" style="display:none">
   <div class="sheet hub">
     <header class="doc">
-      <span class="version">v1.0.7</span>
+      <span class="version">v1.2.0</span>
       <div class="company">T7 Mérnökiroda Kft.<small>2141 Csömör, Sármány u. 16.</small></div>
       <img class="logo" id="statsLogo" alt="T7 Mérnökiroda Kft.">
     </header>
@@ -611,20 +702,6 @@
   </div>
 </div>
 
-<!-- FULLSCREEN SKETCH EDITOR — Utcafronti homlokzat -->
-<div class="fs-overlay" id="fsOverlay">
-  <div class="fs-head">
-    <span class="fs-title">Utcafronti homlokzat vázlata</span>
-    <div class="fs-tools">
-      <button type="button" class="tool" id="fsPen" aria-pressed="true">✏️ Toll</button>
-      <button type="button" class="tool" id="fsEraser" aria-pressed="false">🧽 Radír</button>
-      <button type="button" class="danger" id="fsClear">Törlés</button>
-      <button type="button" class="primary" id="fsDone">Kész</button>
-    </div>
-  </div>
-  <div class="fs-canvas-wrap" id="fsCanvasWrap"><canvas id="fsCanvas"></canvas></div>
-</div>
-
 <!-- FULLSCREEN SKETCH EDITOR — Alaprajzi vázlat / károsodások helye -->
 <div class="fs-overlay" id="fpOverlay">
   <div class="fs-head">
@@ -632,7 +709,12 @@
     <div class="fs-tools">
       <button type="button" class="tool" id="fpPen" aria-pressed="true">✏️ Toll</button>
       <button type="button" class="tool" id="fpEraser" aria-pressed="false">🧽 Radír</button>
-      <button type="button" class="danger" id="fpClear">Törlés</button>
+      <button type="button" class="tool" id="fpArrow" aria-pressed="false">➡️ Nyíl</button>
+      <button type="button" class="tool" id="fpLine" aria-pressed="false">📏 Egyenes</button>
+      <button type="button" class="tool" id="fpSelect" aria-pressed="false">✋ Mozgatás</button>
+      <button type="button" class="ghost" id="fpUndo">↩︎ Vissza</button>
+      <button type="button" class="danger" id="fpDelSel">🗑 Kijelölt</button>
+      <button type="button" class="danger" id="fpClear">Mind törlése</button>
       <button type="button" class="primary" id="fpDone">Kész</button>
     </div>
   </div>
@@ -1092,29 +1174,32 @@ window.IRSZ_DB = {
   "use strict";
 
   /* ---------- Chip select logic ---------- */
-  function setChip(chip,on){ chip.setAttribute("aria-pressed", on ? "true":"false"); }
-
-  document.querySelectorAll(".chip").forEach(function(chip){
-    chip.addEventListener("click",function(){
-      var pressed = chip.getAttribute("aria-pressed")==="true";
-      var single = chip.closest("[data-single]") || (chip.dataset.group ? document.getElementById(chip.dataset.group) : null);
-      // building-type "Egyéb" belongs to the single group too
-      if(chip.dataset.group==="epuletJellege"){
-        // deselect all in that group + this standalone "Egyéb"
-        document.querySelectorAll('#epuletJellege .chip, .chip[data-group="epuletJellege"]').forEach(function(c){ setChip(c,false); });
-        setChip(chip, !pressed);
-        return;
-      }
-      if(single){
-        single.querySelectorAll(".chip").forEach(function(c){ setChip(c,false); });
-        // also clear the standalone Egyéb tied to this group
-        document.querySelectorAll('.chip[data-group="'+ (single.id) +'"]').forEach(function(c){ setChip(c,false); });
-        setChip(chip, !pressed);
-      } else {
-        setChip(chip, !pressed);
-      }
-    });
+  /* ---------- Többértékű legördülő listák (details + checkbox) ---------- */
+  function updateDropdown(dd){
+    if(!dd) return;
+    var txt=dd.querySelector(".dd-text");
+    var eg=dd.querySelector(".dd-egyeb"), egIn=dd.querySelector(".dd-egyeb-input");
+    var vals=[];
+    Array.prototype.forEach.call(dd.querySelectorAll(".dd-opt input[type=checkbox]"),function(c){ if(c.checked) vals.push(c.value); });
+    if(egIn) egIn.style.display=(eg&&eg.checked)?"block":"none";
+    var show=vals.slice();
+    if(eg&&eg.checked && egIn && egIn.value.trim()){ show=show.filter(function(v){return v!=="Egyéb";}); show.push(egIn.value.trim()); }
+    if(txt){
+      if(show.length){ txt.textContent=show.join(", "); txt.classList.remove("is-empty"); }
+      else { txt.textContent=txt.getAttribute("data-ph")||"— válasszon —"; txt.classList.add("is-empty"); }
+    }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".dropdown"),function(dd){
+    dd.addEventListener("change",function(){ updateDropdown(dd); });
+    var egIn=dd.querySelector(".dd-egyeb-input");
+    if(egIn) egIn.addEventListener("input",function(){ updateDropdown(dd); });
+    updateDropdown(dd);
   });
+  window.DropdownAPI={
+    get:function(id){ var dd=document.getElementById(id); if(!dd) return []; var a=[]; Array.prototype.forEach.call(dd.querySelectorAll(".dd-opt input[type=checkbox]"),function(c){ if(c.checked) a.push(c.value); }); return a; },
+    set:function(id,vals){ var dd=document.getElementById(id); if(!dd) return; vals=vals||[]; Array.prototype.forEach.call(dd.querySelectorAll(".dd-opt input[type=checkbox]"),function(c){ c.checked=vals.indexOf(c.value)>=0; }); updateDropdown(dd); },
+    text:function(id){ var dd=document.getElementById(id); if(!dd) return ""; var t=dd.querySelector(".dd-text"); return (t && !t.classList.contains("is-empty"))?t.textContent.trim():""; }
+  };
   /* ---------- Postal code -> settlement auto-fill ----------
      Full nationwide table is injected below as window.IRSZ_DB (code -> település).
      Budapest is resolved programmatically: digits 2-3 of a 1xxx code = district. */
@@ -1152,143 +1237,192 @@ window.IRSZ_DB = {
   });
 
   /* ---------- Damage entries ---------- */
-  /* ---------- Drawing canvas factory ---------- */
+  /* ---------- Drawing canvas factory (objektum-alapú: rács + tinta-réteg + nyíl/egyenes + undo) ---------- */
   function makeCanvas(canvas, opts){
     opts=opts||{};
+    canvas.style.touchAction="none";
     var ctx=canvas.getContext("2d");
     var dpr=Math.max(1, window.devicePixelRatio||1);
-    var drawing=false, lastX=0, lastY=0;
     var mode="pen";
-    var dirty=false;
+    var items=[];                 // elemek: {k:'stroke'|'arrow'|'line', ...}
+    var history=[];               // undo pillanatképek (JSON)
+    var cssW=0, cssH=0;
+    var penColor=opts.color||"#16527F", penWidth=opts.width||2.5, eraserW=opts.eraserWidth||22;
+    var arrowColor="#F57C00", lineColor="#111111";
+    var active=null, selected=null;
+    var onModeAuto=opts.onModeAuto||function(){};
+    var ink=document.createElement("canvas"), ictx=ink.getContext("2d");
 
     function curH(){ return opts.height || canvas.parentNode.getBoundingClientRect().height || 220; }
     function fit(){
-      var rect=canvas.parentNode.getBoundingClientRect();
-      var w=rect.width, h=curH();
-      if(!w||!h) return;
-      var prev=null;
-      if(canvas.width){ prev=document.createElement("canvas"); prev.width=canvas.width; prev.height=canvas.height; prev.getContext("2d").drawImage(canvas,0,0); }
-      canvas.width=Math.round(w*dpr);
-      canvas.height=Math.round(h*dpr);
-      canvas.style.height=h+"px";
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      paintBg(w,h);
-      if(prev){ ctx.drawImage(prev,0,0,prev.width/dpr,prev.height/dpr); }
+      var rect=canvas.parentNode.getBoundingClientRect(); var w=rect.width, h=curH(); if(!w||!h) return;
+      cssW=w; cssH=h;
+      canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr); canvas.style.height=h+"px";
+      render();
     }
-    function paintBg(w,h){
-      ctx.save();
-      ctx.fillStyle="#fff"; ctx.fillRect(0,0,w,h);
+    function paintBg(g){
+      g.save();
+      g.fillStyle="#fff"; g.fillRect(0,0,cssW,cssH);
       if(opts.grid){
-        ctx.strokeStyle="#E4EAF0"; ctx.lineWidth=1;
-        var step=opts.grid;
-        for(var x=step;x<w;x+=step){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke(); }
-        for(var y=step;y<h;y+=step){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke(); }
+        g.strokeStyle="#E4EAF0"; g.lineWidth=1; var step=opts.grid, x, y;
+        for(x=step;x<cssW;x+=step){ g.beginPath();g.moveTo(x,0);g.lineTo(x,cssH);g.stroke(); }
+        for(y=step;y<cssH;y+=step){ g.beginPath();g.moveTo(0,y);g.lineTo(cssW,y);g.stroke(); }
       }
-      if(opts.baseline){
-        ctx.strokeStyle="#C9D3DD"; ctx.lineWidth=1;
-        ctx.beginPath(); ctx.moveTo(20,h-22); ctx.lineTo(w-20,h-22); ctx.stroke();
-      }
-      ctx.restore();
+      if(opts.baseline){ g.strokeStyle="#C9D3DD"; g.lineWidth=1; g.beginPath(); g.moveTo(20,cssH-22); g.lineTo(cssW-20,cssH-22); g.stroke(); }
+      g.restore();
     }
-    function pos(e){
-      var r=canvas.getBoundingClientRect();
-      var cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-      var cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-      return {x:cx,y:cy};
+    function ensureInk(){ if(ink.width!==canvas.width||ink.height!==canvas.height){ ink.width=canvas.width; ink.height=canvas.height; } }
+    function renderInk(){                 // csak a szabadkézi vonalak — a radír kizárólag ezt érinti, a rácsot nem
+      ensureInk();
+      ictx.setTransform(dpr,0,0,dpr,0,0); ictx.clearRect(0,0,cssW,cssH);
+      ictx.lineCap="round"; ictx.lineJoin="round";
+      items.forEach(function(it){
+        if(it.k!=="stroke") return;
+        ictx.globalCompositeOperation=(it.mode==="erase")?"destination-out":"source-over";
+        ictx.strokeStyle=it.color||penColor; ictx.lineWidth=it.w;
+        var p=it.pts; if(!p.length) return;
+        ictx.beginPath(); ictx.moveTo(p[0][0],p[0][1]);
+        if(p.length===1){ ictx.lineTo(p[0][0]+0.01,p[0][1]); }
+        for(var i=1;i<p.length;i++) ictx.lineTo(p[i][0],p[i][1]);
+        ictx.stroke();
+      });
+      ictx.globalCompositeOperation="source-over";
     }
-    function start(e){ e.preventDefault(); drawing=true; var p=pos(e); lastX=p.x; lastY=p.y; }
-    function move(e){
-      if(!drawing) return; e.preventDefault();
-      var p=pos(e);
-      ctx.lineCap="round"; ctx.lineJoin="round";
-      if(mode==="eraser"){ ctx.globalCompositeOperation="source-over"; ctx.strokeStyle="#fff"; ctx.lineWidth=24; }
-      else { ctx.globalCompositeOperation="source-over"; ctx.strokeStyle=opts.color||"#16527F"; ctx.lineWidth=opts.width||2.5; }
-      ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke();
-      lastX=p.x; lastY=p.y; dirty=true;
+    function inkSeg(it,x0,y0,x1,y1){       // inkrementális szegmens (gyors rajzolás)
+      ensureInk();
+      ictx.setTransform(dpr,0,0,dpr,0,0); ictx.lineCap="round"; ictx.lineJoin="round";
+      ictx.globalCompositeOperation=(it.mode==="erase")?"destination-out":"source-over";
+      ictx.strokeStyle=it.color||penColor; ictx.lineWidth=it.w;
+      ictx.beginPath(); ictx.moveTo(x0,y0); ictx.lineTo(x1,y1); ictx.stroke();
+      ictx.globalCompositeOperation="source-over";
     }
-    function end(){ drawing=false; }
+    function drawArrow(g,o){
+      g.save(); g.strokeStyle=o.color; g.fillStyle=o.color; g.lineWidth=o.w; g.lineCap="round"; g.lineJoin="round";
+      g.beginPath(); g.moveTo(o.x1,o.y1); g.lineTo(o.x2,o.y2); g.stroke();
+      var ang=Math.atan2(o.y2-o.y1,o.x2-o.x1), head=Math.max(12,o.w*4.5);
+      g.beginPath(); g.moveTo(o.x2,o.y2);
+      g.lineTo(o.x2-head*Math.cos(ang-0.42), o.y2-head*Math.sin(ang-0.42));
+      g.lineTo(o.x2-head*Math.cos(ang+0.42), o.y2-head*Math.sin(ang+0.42));
+      g.closePath(); g.fill(); g.restore();
+    }
+    function drawLineObj(g,o){ g.save(); g.strokeStyle=o.color; g.lineWidth=o.w; g.lineCap="round"; g.beginPath(); g.moveTo(o.x1,o.y1); g.lineTo(o.x2,o.y2); g.stroke(); g.restore(); }
+    function drawHandles(g,o){ g.save(); [[o.x1,o.y1],[o.x2,o.y2]].forEach(function(pt){ g.beginPath(); g.arc(pt[0],pt[1],8,0,Math.PI*2); g.fillStyle="#fff"; g.fill(); g.lineWidth=2.5; g.strokeStyle="#1F6FB2"; g.stroke(); }); g.restore(); }
+    function compositeMain(){
+      ctx.setTransform(dpr,0,0,dpr,0,0); paintBg(ctx);
+      ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(ink,0,0); ctx.restore();
+      items.forEach(function(it){ if(it.k==="arrow") drawArrow(ctx,it); else if(it.k==="line") drawLineObj(ctx,it); });
+      if(selected) drawHandles(ctx,selected);
+    }
+    function render(){ if(!cssW){ var rect=canvas.parentNode.getBoundingClientRect(); cssW=rect.width; cssH=curH(); } renderInk(); compositeMain(); }
 
+    function pushHistory(){ try{ history.push(JSON.stringify(items)); if(history.length>60) history.shift(); }catch(e){} }
+    function pos(e){ var r=canvas.getBoundingClientRect(); var t=e.touches&&e.touches[0]; return {x:(t?t.clientX:e.clientX)-r.left, y:(t?t.clientY:e.clientY)-r.top}; }
+    function d2(ax,ay,bx,by){ var dx=ax-bx,dy=ay-by; return dx*dx+dy*dy; }
+    function nearEnd(o,x,y){ if(d2(o.x1,o.y1,x,y)<=256) return 1; if(d2(o.x2,o.y2,x,y)<=256) return 2; return 0; }
+    function segDist(o,x,y){ var vx=o.x2-o.x1,vy=o.y2-o.y1,wx=x-o.x1,wy=y-o.y1,c1=vx*wx+vy*wy; if(c1<=0)return Math.sqrt(d2(x,y,o.x1,o.y1)); var c2=vx*vx+vy*vy; if(c2<=c1)return Math.sqrt(d2(x,y,o.x2,o.y2)); var t=c1/c2; return Math.sqrt(d2(x,y,o.x1+t*vx,o.y1+t*vy)); }
+    function hitObject(x,y){ for(var i=items.length-1;i>=0;i--){ var it=items[i]; if(it.k!=="arrow"&&it.k!=="line")continue; if(segDist(it,x,y)<=Math.max(12,it.w+8)) return it; } return null; }
+
+    function start(e){
+      e.preventDefault();
+      try{ if(canvas.setPointerCapture && e.pointerId!=null) canvas.setPointerCapture(e.pointerId); }catch(_){}
+      var p=pos(e);
+      if(mode==="pen"||mode==="eraser"){
+        pushHistory();
+        var it={k:"stroke",mode:(mode==="eraser"?"erase":"pen"),w:(mode==="eraser"?eraserW:penWidth),color:penColor,pts:[[p.x,p.y]]};
+        items.push(it); active={t:"stroke",it:it,lx:p.x,ly:p.y}; render();
+      } else if(mode==="arrow"||mode==="line"){
+        pushHistory();
+        var o={k:mode,x1:p.x,y1:p.y,x2:p.x+1,y2:p.y+1,color:(mode==="arrow"?arrowColor:lineColor),w:penWidth};
+        items.push(o); selected=o; active={t:"create",o:o}; render();
+      } else if(mode==="select"){
+        if(selected){ var ep=nearEnd(selected,p.x,p.y); if(ep){ pushHistory(); active={t:"end",o:selected,ep:ep}; return; } }
+        var hit=hitObject(p.x,p.y);
+        if(hit){ selected=hit; pushHistory(); active={t:"move",o:hit,ox:p.x,oy:p.y}; render(); }
+        else { selected=null; active=null; render(); }
+      }
+    }
+    function move(e){
+      if(!active) return; e.preventDefault(); var p=pos(e);
+      if(active.t==="stroke"){ inkSeg(active.it,active.lx,active.ly,p.x,p.y); active.it.pts.push([p.x,p.y]); active.lx=p.x; active.ly=p.y; compositeMain(); }
+      else if(active.t==="create"){ active.o.x2=p.x; active.o.y2=p.y; render(); }
+      else if(active.t==="end"){ if(active.ep===1){active.o.x1=p.x;active.o.y1=p.y;}else{active.o.x2=p.x;active.o.y2=p.y;} render(); }
+      else if(active.t==="move"){ var dx=p.x-active.ox,dy=p.y-active.oy; active.o.x1+=dx;active.o.y1+=dy;active.o.x2+=dx;active.o.y2+=dy; active.ox=p.x;active.oy=p.y; render(); }
+    }
+    function end(){
+      if(active&&active.t==="create"){
+        var o=active.o;
+        if(d2(o.x1,o.y1,o.x2,o.y2)<120){ o.x2=o.x1+Math.min(100,(cssW||200)*0.3); o.y2=o.y1; }
+        mode="select"; onModeAuto("select"); render();
+      }
+      active=null;
+    }
     canvas.addEventListener("pointerdown",start);
     canvas.addEventListener("pointermove",move);
-    window.addEventListener("pointerup",end);
-    canvas.addEventListener("touchstart",start,{passive:false});
-    canvas.addEventListener("touchmove",move,{passive:false});
-    canvas.addEventListener("touchend",end);
-
-    if(!opts.manualFit){
-      var rt;
-      window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(fit,200); });
-      fit();
+    canvas.addEventListener("pointerup",end);
+    canvas.addEventListener("pointercancel",end);
+    if(!window.PointerEvent){
+      canvas.addEventListener("mousedown",start); canvas.addEventListener("mousemove",move); window.addEventListener("mouseup",end);
+      canvas.addEventListener("touchstart",start,{passive:false});
+      canvas.addEventListener("touchmove",move,{passive:false});
+      canvas.addEventListener("touchend",end);
     }
+    if(!opts.manualFit){ var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(fit,200); }); fit(); }
 
     return {
       fit:fit,
-      clear:function(){ var rect=canvas.parentNode.getBoundingClientRect(); paintBg(rect.width, curH()); dirty=false; },
-      setMode:function(m){ mode=m; },
-      isDirty:function(){ return dirty; },
-      toDataURL:function(){ return canvas.toDataURL("image/png"); }
+      clear:function(){ pushHistory(); items=[]; selected=null; render(); },
+      undo:function(){ if(!history.length) return; try{ items=JSON.parse(history.pop()); }catch(e){ items=[]; } selected=null; render(); },
+      setMode:function(m){ mode=m; if(m!=="select") selected=null; render(); },
+      deleteSelected:function(){ if(!selected) return false; pushHistory(); items=items.filter(function(x){return x!==selected;}); selected=null; render(); return true; },
+      hasSelection:function(){ return !!selected; },
+      isDirty:function(){ return items.length>0; },
+      toDataURL:function(){ selected=null; render(); return canvas.toDataURL("image/png"); },
+      getItems:function(){ try{ return JSON.parse(JSON.stringify(items)); }catch(e){ return []; } },
+      setItems:function(a){ items=Array.isArray(a)?a:[]; selected=null; try{ requestAnimationFrame(function(){ fit(); render(); }); }catch(e){ render(); } }
     };
   }
 
-  var sign=makeCanvas(document.getElementById("signCanvas"),{height:150,baseline:true,color:"#172430",width:2.2});
-  document.getElementById("signClear").addEventListener("click",function(){ sign.clear(); });
-  var ownerSign=makeCanvas(document.getElementById("ownerSignCanvas"),{height:150,baseline:true,color:"#172430",width:2.2});
+  var ownerSign=makeCanvas(document.getElementById("ownerSignCanvas"),{height:75,baseline:true,color:"#172430",width:2.2});
   document.getElementById("ownerSignClear").addEventListener("click",function(){ ownerSign.clear(); });
 
   /* ---------- Reusable fullscreen sketch editor (trigger → overlay → thumbnail) ---------- */
   function setupSketchEditor(cfg){
-    var sketch=makeCanvas(document.getElementById(cfg.canvas),{manualFit:true,grid:cfg.grid,color:cfg.color||"#16527F",width:cfg.width||2.8});
-    var overlay=document.getElementById(cfg.overlay),
-        trigger=document.getElementById(cfg.trigger),
-        thumb=document.getElementById(cfg.thumb),
-        ph=document.getElementById(cfg.ph),
-        mini=document.getElementById(cfg.mini);
-    function openEditor(){
-      overlay.classList.add("open");
-      document.body.style.overflow="hidden";
-      // fit after layout so parent has real dimensions; retains existing drawing
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ sketch.fit(); }); });
-    }
+    function gid(id){ return id?document.getElementById(id):null; }
+    var sketch=makeCanvas(document.getElementById(cfg.canvas),{
+      manualFit:true, grid:cfg.grid, color:cfg.color||"#16527F", width:cfg.width||2.8, eraserWidth:cfg.eraserWidth||22,
+      onModeAuto:function(m){ setActive(m); }
+    });
+    var overlay=gid(cfg.overlay), trigger=gid(cfg.trigger), thumb=gid(cfg.thumb), ph=gid(cfg.ph), mini=gid(cfg.mini);
+    var tools={ pen:gid(cfg.pen), eraser:gid(cfg.eraser), arrow:gid(cfg.arrow), line:gid(cfg.line), select:gid(cfg.select) };
+    function setActive(m){ for(var k in tools){ if(tools[k]) tools[k].setAttribute("aria-pressed",(k===m)?"true":"false"); } }
+    function pick(m){ sketch.setMode(m); setActive(m); }
+    if(tools.pen)    tools.pen.addEventListener("click",function(){ pick("pen"); });
+    if(tools.eraser) tools.eraser.addEventListener("click",function(){ pick("eraser"); });
+    if(tools.arrow)  tools.arrow.addEventListener("click",function(){ pick("arrow"); });
+    if(tools.line)   tools.line.addEventListener("click",function(){ pick("line"); });
+    if(tools.select) tools.select.addEventListener("click",function(){ pick("select"); });
+    if(gid(cfg.undo))   gid(cfg.undo).addEventListener("click",function(){ sketch.undo(); });
+    if(gid(cfg.delSel)) gid(cfg.delSel).addEventListener("click",function(){ if(!sketch.deleteSelected()) alert("Előbb koppintson a Mozgatás eszközre, majd a törlendő nyílra / egyenesre."); });
+
+    function openEditor(){ overlay.classList.add("open"); document.body.style.overflow="hidden"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ sketch.fit(); }); }); }
     function closeEditor(){
-      overlay.classList.remove("open");
-      document.body.style.overflow="";
-      if(sketch.isDirty()){
-        thumb.src=sketch.toDataURL();
-        thumb.style.display="block";
-        ph.style.display="none";
-        mini.style.display="flex";
-      } else {
-        thumb.style.display="none";
-        ph.style.display="block";
-        mini.style.display="none";
-      }
+      overlay.classList.remove("open"); document.body.style.overflow="";
+      if(sketch.isDirty()){ thumb.src=sketch.toDataURL(); thumb.style.display="block"; ph.style.display="none"; mini.style.display="flex"; }
+      else { thumb.style.display="none"; ph.style.display="block"; mini.style.display="none"; }
     }
     trigger.addEventListener("click",openEditor);
-    document.getElementById(cfg.edit).addEventListener("click",function(e){ e.stopPropagation(); openEditor(); });
-    document.getElementById(cfg.clearMini).addEventListener("click",function(e){
-      e.stopPropagation();
-      if(confirm(cfg.clearMsg)){ sketch.clear(); thumb.style.display="none"; ph.style.display="block"; mini.style.display="none"; }
-    });
-    document.getElementById(cfg.done).addEventListener("click",closeEditor);
-    document.getElementById(cfg.clear).addEventListener("click",function(){ sketch.clear(); });
-    var pen=document.getElementById(cfg.pen), eraser=document.getElementById(cfg.eraser);
-    pen.addEventListener("click",function(){ sketch.setMode("pen"); pen.setAttribute("aria-pressed","true"); eraser.setAttribute("aria-pressed","false"); });
-    eraser.addEventListener("click",function(){ sketch.setMode("eraser"); eraser.setAttribute("aria-pressed","true"); pen.setAttribute("aria-pressed","false"); });
+    gid(cfg.edit).addEventListener("click",function(e){ e.stopPropagation(); openEditor(); });
+    gid(cfg.clearMini).addEventListener("click",function(e){ e.stopPropagation(); if(confirm(cfg.clearMsg)){ sketch.clear(); thumb.style.display="none"; ph.style.display="block"; mini.style.display="none"; } });
+    gid(cfg.done).addEventListener("click",closeEditor);
+    gid(cfg.clear).addEventListener("click",function(){ if(confirm(cfg.clearMsg||"Biztosan törli a vázlatot?")) sketch.clear(); });
+    setActive("pen");
     window.addEventListener("keydown",function(e){ if(e.key==="Escape" && overlay.classList.contains("open")) closeEditor(); });
-    var rt;
-    window.addEventListener("resize",function(){ if(overlay.classList.contains("open")){ clearTimeout(rt); rt=setTimeout(function(){ sketch.fit(); },200); } });
+    var rt; window.addEventListener("resize",function(){ if(overlay.classList.contains("open")){ clearTimeout(rt); rt=setTimeout(function(){ sketch.fit(); },200); } });
     return sketch;
   }
 
-  // Utcafronti homlokzat vázlata
-  var facadeSketch=setupSketchEditor({
-    canvas:"fsCanvas", overlay:"fsOverlay",
-    trigger:"facadeTrigger", thumb:"facadeThumb", ph:"facadePh", mini:"facadeMini",
-    edit:"facadeEdit", clearMini:"facadeClearMini",
-    done:"fsDone", clear:"fsClear", pen:"fsPen", eraser:"fsEraser",
-    grid:28, color:"#16527F", width:2.8,
-    clearMsg:"Biztosan törli a homlokzat vázlatát?"
-  });
+  // Utcafronti homlokzat vázlata — eltávolítva
+  var facadeSketch=null;
 
   // Alaprajzi vázlat / károsodások helye — ugyanaz az élmény, mint a homlokzatnál
   var floorSketch=setupSketchEditor({
@@ -1296,6 +1430,7 @@ window.IRSZ_DB = {
     trigger:"floorTrigger", thumb:"floorThumb", ph:"floorPh", mini:"floorMini",
     edit:"floorEdit", clearMini:"floorClearMini",
     done:"fpDone", clear:"fpClear", pen:"fpPen", eraser:"fpEraser",
+    arrow:"fpArrow", line:"fpLine", select:"fpSelect", undo:"fpUndo", delSel:"fpDelSel",
     grid:24, color:"#16527F", width:2.5,
     clearMsg:"Biztosan törli az alaprajzi vázlatot?"
   });
@@ -1330,15 +1465,18 @@ window.IRSZ_DB = {
       btn.textContent = on ? "⏹ Diktálás leállítása" : "🎤 Diktálás";
     }
 
+    function capSentences(s){ return (s||"").replace(/(^\s*|[.!?]\s+)(\S)/g, function(m,pre,ch){ return pre+ch.toUpperCase(); }); }
     rec.onresult=function(e){
-      var interim="";
-      for(var i=e.resultIndex;i<e.results.length;i++){
+      // A végleges szöveget MINDIG a teljes eredménylistából építjük újra — így nem duplázódik az első szó.
+      var finalT="", interim="";
+      for(var i=0;i<e.results.length;i++){
         var r=e.results[i];
-        if(r.isFinal){ sessionFinal=pad(sessionFinal)+r[0].transcript.trim(); }
-        else { interim+=r[0].transcript; }
+        if(r.isFinal){ finalT += (finalT?" ":"") + r[0].transcript.trim(); }
+        else { interim += r[0].transcript; }
       }
-      var combined=pad(baseText)+sessionFinal;
-      ta.value = interim ? pad(combined)+interim : combined;
+      var combined = finalT ? ((baseText?pad(baseText):"")+finalT) : (baseText||"");
+      var out = interim ? pad(combined)+interim : combined;
+      ta.value = capSentences(out);   // minden mondat nagybetűvel kezdődjön
     };
     rec.onerror=function(e){
       if(hint){
@@ -1381,6 +1519,7 @@ window.IRSZ_DB = {
     var MAX_EMBED_DIM=1600;   // a dokumentumba ágyazott kép leghosszabb oldala (px)
     var EMBED_QUALITY=0.82;   // JPEG minőség a beágyazott (kicsinyített) képhez
     var seq=0;                // futó sorszám a mentett eredeti fájlnevéhez
+    var retakeTarget=null;    // ha nem null: a meglévő fotókártya cseréje (nem új készül)
 
     function refresh(){
       var n=0;
@@ -1450,7 +1589,7 @@ window.IRSZ_DB = {
       }
     }
 
-    function addPhoto(dataUrl, saved, desc){
+    function addPhoto(dataUrl, saved, desc, gps){
       var card=document.createElement("div");
       card.className="photo-card";
       card.innerHTML=
@@ -1460,27 +1599,58 @@ window.IRSZ_DB = {
           '<div><img class="shot" alt="Helyszíni fotó"></div>'+
           '<div>'+
             '<div class="gps-line gps">📍 GPS: meghatározás folyamatban…</div>'+
-            (saved?'<div class="field-note no-print">📥 Teljes felbontású eredeti mentve a készülékre (Letöltések / Galéria). A jegyzőkönyvbe kicsinyített másolat kerül.</div>':'')+
-            '<label class="fld" style="margin-bottom:0"><span>A fotó leírása</span>'+
+            (saved?'<div class="field-note no-print">📥 Teljes felbontású eredeti mentve a készülékre (Letöltések / Galéria).</div>':'')+
+            '<label class="fld" style="margin-bottom:6px"><span>A fotó leírása</span>'+
             '<textarea placeholder="Mit ábrázol a fotó? Helyszín, érintett szerkezet, károsodás…"></textarea></label>'+
+            '<div class="desc-print"></div>'+
+            '<div class="pc-actions no-print"><button type="button" class="ghost retake-row">🔄 Csere / újrafotózás</button></div>'+
           '</div>'+
         '</div>';
       if(dataUrl) card.querySelector("img.shot").src=dataUrl;
-      if(desc){ var ta=card.querySelector("textarea"); if(ta) ta.value=desc; }   // a fotózás szövegdoboz tartalma a kép saját leírásába
+      var ta=card.querySelector("textarea"), dp=card.querySelector(".desc-print");
+      function syncDesc(){ if(dp) dp.textContent=ta?ta.value:""; }
+      if(desc && ta) ta.value=desc;   // a fotózás szövegdoboz tartalma a kép saját leírásába
+      syncDesc();
+      if(ta) ta.addEventListener("input",syncDesc);
       card.querySelector(".del-row").addEventListener("click",function(){ card.remove(); refresh(); });
+      card.querySelector(".retake-row").addEventListener("click",function(){ retakeTarget=card; input.value=""; input.click(); });
       list.appendChild(card);
       refresh();
-      requestGps(card.querySelector(".gps"));
+      var gl=card.querySelector(".gps");
+      if(gps && (gps.html || isFinite(gps.lat))){        // visszatöltött fotó: a mentett GPS-t mutatjuk, nem kérünk újat
+        if(gps.html){ gl.innerHTML=gps.html; }
+        else { gl.innerHTML="📍 GPS: <code>"+Number(gps.lat).toFixed(6)+", "+Number(gps.lon).toFixed(6)+"</code>"; }
+        if(isFinite(gps.lat)&&isFinite(gps.lon)){ gl.setAttribute("data-lat",gps.lat); gl.setAttribute("data-lon",gps.lon); }
+      } else {
+        requestGps(gl);
+      }
+      return card;
     }
+    // Külső elérés a mentés/visszatöltéshez
+    window.PhotoAPI={
+      add:function(dataUrl,desc,gps){ return addPhoto(dataUrl,false,desc||"",gps||null); },
+      clearAll:function(){ list.innerHTML=""; refresh(); },
+      cards:function(){ return list.querySelectorAll(".photo-card"); },
+      syncDescs:function(){ Array.prototype.forEach.call(list.querySelectorAll(".photo-card"),function(c){ var t=c.querySelector("textarea"), d=c.querySelector(".desc-print"); if(d) d.textContent=t?t.value:""; }); }
+    };
 
-    takeBtn.addEventListener("click",function(){ input.value=""; input.click(); });
+    takeBtn.addEventListener("click",function(){ retakeTarget=null; input.value=""; input.click(); });
     input.addEventListener("change",function(){
       var f=input.files && input.files[0];
       if(!f) return;
+      var target=retakeTarget; retakeTarget=null;
       seq++;
+      var saved=saveOriginal(f, seq);          // teljes felbontás a készülékre
+      if(target){
+        // meglévő fotó cseréje (szerkesztés / újrafotózás) — a leírás megmarad
+        downscale(f, function(small){
+          var apply=function(url){ var im=target.querySelector("img.shot"); if(im) im.src=url; requestGps(target.querySelector(".gps")); };
+          if(small) apply(small); else { var r=new FileReader(); r.onload=function(){ apply(r.result); }; r.readAsDataURL(f); }
+        });
+        return;
+      }
       var notes=((document.getElementById("photoNotes")||{}).value||"").trim();  // az általános szövegdoboz tartalma
-      var saved=saveOriginal(f, seq);          // 1) teljes felbontás a készülékre
-      downscale(f, function(small){            // 2) kicsinyített másolat a dokumentumba
+      downscale(f, function(small){            // kicsinyített másolat a dokumentumba
         if(small){ addPhoto(small, saved, notes); }
         else { var r=new FileReader(); r.onload=function(){ addPhoto(r.result, saved, notes); }; r.readAsDataURL(f); }
       });
@@ -1546,8 +1716,12 @@ window.IRSZ_DB = {
       var fname="image"+imgN+"."+ext, rid="rIdImg"+imgN;
       media.push({name:"word/media/"+fname,data:bytes});
       rels.push('<Relationship Id="'+rid+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'+fname+'"/>');
-      var sz=imgSize(bytes,mime), cx=sz.w*EMU, cy=sz.h*EMU, lim=cap||MAXW;
-      if(cx>lim){ cy=Math.round(cy*lim/cx); cx=lim; }
+      var sz=imgSize(bytes,mime), cx=sz.w*EMU, cy=sz.h*EMU;
+      var limW=(cap&&cap.w)||(typeof cap==="number"?cap:0)||MAXW;   // szélesség-korlát (EMU)
+      var limH=(cap&&cap.h)||0;                                     // magasság-korlát (EMU); álló képeknél ez fogja be
+      if(cx>limW){ cy=cy*limW/cx; cx=limW; }
+      if(limH && cy>limH){ cx=cx*limH/cy; cy=limH; }
+      cx=Math.round(cx); cy=Math.round(cy);
       return '<w:p><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0">'+
         '<wp:extent cx="'+cx+'" cy="'+cy+'"/><wp:docPr id="'+imgN+'" name="kep'+imgN+'"/>'+
         '<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">'+
@@ -1565,6 +1739,7 @@ window.IRSZ_DB = {
       else if(b.type==="text") body+=para(run((b.text&&b.text.length)?b.text:" ",{}),{after:40});
       else if(b.type==="chips") body+=para(b.items.map(function(it){return run((it.on?"\u2611 ":"\u2610 ")+it.label+"   ",{bold:it.on});}).join(""),{after:40});
       else if(b.type==="image" && b.src && b.src.indexOf("data:")===0){ try{ body+=addImage(b.src,b.cap); }catch(e){} }
+      else if(b.type==="pagebreak"){ body+='<w:p><w:r><w:br w:type="page"/></w:r></w:p>'; }
     });
     var sect='<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>';
     var doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><w:body>'+body+sect+'</w:body></w:document>';
@@ -1582,28 +1757,39 @@ window.IRSZ_DB = {
 
   /* ----- collect current form data into docx blocks ----- */
   function collectBlocks(){
-    var blocks=[], emitted=[];
+    var blocks=[], emitted=[], photoIdx=0;
     function valOf(el){ if(el.tagName==="SELECT") return el.options[el.selectedIndex]?el.options[el.selectedIndex].text:""; if(el.type==="date") return fmtDate(el.value); return el.value||""; }
     function done(el){ emitted.push(el); }
     function isDone(el){ return emitted.indexOf(el)>=0; }
     var comp=document.querySelector("#formSheet .company");
     if(comp){ var small=comp.querySelector("small"); var nm=comp.childNodes[0]?comp.childNodes[0].textContent.trim():comp.textContent.trim(); blocks.push({type:"heading",text:nm||"T7 Mérnökiroda Kft."}); if(small) blocks.push({type:"text",text:small.textContent.trim()}); }
+    // Cím-blokk (a PDF-fel azonos fejléc): dokumentum címe + alcím (dok. köre) + bevezető
+    (function(){
+      var tb=document.querySelector("#formSheet .title-block"); if(!tb) return;
+      var t=document.getElementById("docTitle"); if(t && t.textContent.trim()) blocks.push({type:"sub",text:t.textContent.trim()});
+      var sub=tb.querySelector(".subtitle");
+      if(sub){ var st=Array.prototype.map.call(sub.childNodes,function(n){ if(n.nodeType===3) return n.textContent; if(n.tagName==="SELECT") return (n.options[n.selectedIndex]?n.options[n.selectedIndex].text:""); return n.textContent||""; }).join(" ").replace(/\s+/g," ").trim(); if(st) blocks.push({type:"text",text:st}); }
+      var intro=document.querySelector("#formSheet .intro"); if(intro) blocks.push({type:"text",text:intro.textContent.trim()});
+    })();
     function chipsOf(c){ return Array.prototype.map.call(c.querySelectorAll(".chip"),function(ch){ return {label:ch.textContent.trim(), on:ch.getAttribute("aria-pressed")==="true"}; }); }
     function emitPhoto(card){
       var no=card.querySelector(".card-no"); if(no) blocks.push({type:"sub",text:no.textContent.trim()});
-      var im=card.querySelector("img.shot"); if(im && im.getAttribute("src") && im.src.indexOf("data:")===0) blocks.push({type:"image",src:im.src,cap:3886200});
+      var im=card.querySelector("img.shot"); if(im && im.getAttribute("src") && im.src.indexOf("data:")===0) blocks.push({type:"image",src:im.src,cap:{w:MAXW,h:3500000}});
       var g=card.querySelector(".gps-line"); if(g) blocks.push({type:"text",text:g.textContent.trim()});
       var ta=card.querySelector("textarea"); if(ta){ blocks.push({type:"label",text:"A fotó leírása"}); blocks.push({type:"text",text:ta.value||""}); done(ta); }
     }
     function walk(node){
       Array.prototype.forEach.call(node.children,function(el){
-        if(el.matches && el.matches(".sec-head,.hint,.field-note,.no-print,datalist,script,style")) return;
+        if(el.matches && el.matches(".sec-head,.hint,.field-note,.no-print,.photo-bar,datalist,script,style")) return;
         if(el.tagName==="BUTTON") return;
         if(el.classList.contains("party-label")){ blocks.push({type:"sub",text:el.textContent.trim()}); return; }
+        if(el.classList.contains("photo-count")){ blocks.push({type:"text",text:el.textContent.replace(/\s+/g," ").trim()}); return; }
+        if(el.classList.contains("dropdown")){ var dv=(window.DropdownAPI?window.DropdownAPI.text(el.id):""); blocks.push({type:"text",text:dv}); Array.prototype.forEach.call(el.querySelectorAll("input,textarea,select"),function(x){ done(x); }); return; }
         if(el.classList.contains("chips")){ var it=chipsOf(el); if(it.length) blocks.push({type:"chips",items:it}); return; }
         if(el.classList.contains("sketch-trigger")){ var img=el.querySelector("img"); if(img && img.getAttribute("src")) blocks.push({type:"image",src:img.src,cap:MAXW}); return; }
         if(el.tagName==="CANVAS"){ try{ blocks.push({type:"image",src:el.toDataURL("image/png"),cap:2560320}); }catch(e){} return; }
-        if(el.classList.contains("photo-card")){ emitPhoto(el); return; }
+        if(el.tagName==="IMG"){ if(el.getAttribute("src") && el.src.indexOf("data:")===0) blocks.push({type:"image",src:el.src,cap:2560320}); return; }
+        if(el.classList.contains("photo-card")){ emitPhoto(el); photoIdx++; if(photoIdx%2===0) blocks.push({type:"pagebreak"}); return; }
         if(el.classList.contains("fld")){
           var span=el.querySelector(":scope > span");
           var ctrl=el.querySelector("input,textarea,select");
@@ -1621,12 +1807,14 @@ window.IRSZ_DB = {
       // fallback: capture any non-empty control not yet emitted (e.g. "Egyéb" specifics)
       Array.prototype.forEach.call(sec.querySelectorAll("input,textarea,select"),function(el){
         if(el.type==="file"||el.type==="hidden"||isDone(el)) return;
+        if(el.closest && (el.closest(".photo-bar")||el.closest(".no-print"))) return;   // az általános fotó-leírás / gombok ne kerüljenek a dokumentumba
         var v=valOf(el); if(!v) return;
         blocks.push({type:"label",text:el.placeholder||"Egyéb"});
         blocks.push({type:"text",text:v});
         done(el);
       });
     });
+    while(blocks.length && blocks[blocks.length-1].type==="pagebreak") blocks.pop();   // ne legyen üres utolsó oldal
     return blocks;
   }
 
@@ -1682,19 +1870,50 @@ window.IRSZ_DB = {
       if(gEl("iszInput")) gEl("iszInput").value=p.irsz||"";
       if(gEl("telepulesInput")) gEl("telepulesInput").value=p.telepules||"";
       if(gEl("scopeSelect") && p.scope) gEl("scopeSelect").value=p.scope;
+      renderWorkerSigns(p);   // munkatárs(ak) neve + aláírása előre kitöltve
     }
     function label(p){ var t=[p.munka||"(névtelen munka)"]; if(p.telepules) t.push(p.telepules); return t.join(" — "); }
     function metaLine(p){ var a=[]; if(p.telepules)a.push(p.telepules); if(p.irsz)a.push(p.irsz); if(p.datum)a.push(p.datum); if(p.scope)a.push(p.scope); return a.join(" · "); }
+
+    // --- kezdőoldali aláírás-padek + munkatárs-aláírások az űrlapon ---
+    var staffPads=[];
+    (function(){
+      function mk(cid, clearId){
+        var c=gEl(cid); if(!c) return null;
+        var pad=makeCanvas(c,{height:150,baseline:true,color:"#172430",width:2.2});
+        var cb=gEl(clearId); if(cb) cb.addEventListener("click",function(){ pad.clear(); });
+        return pad;
+      }
+      staffPads[0]=mk("np_staff1_sig","np_staff1_clear");
+      staffPads[1]=mk("np_staff2_sig","np_staff2_clear");
+      var cnt=gEl("np_staffCount"), s2=gEl("np_staff2");
+      if(cnt&&s2) cnt.addEventListener("change",function(){
+        var two=(cnt.value==="2"); s2.style.display=two?"block":"none";
+        if(two&&staffPads[1]) requestAnimationFrame(function(){ staffPads[1].fit(); });
+      });
+    })();
+    function renderWorkerSigns(p){
+      var box=gEl("workerSigns"); if(!box) return;
+      var staff=(p&&p.staff&&p.staff.length)?p.staff:[];
+      if(!staff.length){ box.innerHTML='<div class="wsign"><div class="wsign-none">Nincs mentett munkatárs ehhez a projekthez.</div></div>'; return; }
+      box.innerHTML=staff.map(function(s,i){
+        var nm=esc(s.name||("Munkatárs "+(i+1)));
+        var sig=s.sig ? '<img class="wsign-img" alt="Aláírás" src="'+esc(s.sig)+'">' : '<div class="wsign-none">Nincs mentett aláírás.</div>';
+        return '<div class="wsign"><label class="fld"><span>'+(i===0?"Név":"Név (2. munkatárs)")+'</span>'+
+               '<input type="text" class="worker-name" value="'+nm+'"></label>'+
+               '<span class="sig-label">Aláírás</span>'+sig+'</div>';
+      }).join("");
+    }
 
     // --- nézetváltás ---
     var projectView=gEl("projectView"), formView=gEl("formView"), statsView=gEl("statsView");
     var recordedThisSession=false;   // ebben a munkamenetben rögzítettük-e már az aktuális házat (a véletlen kettőzés ellen)
     function scrollTop(){ try{ window.scrollTo(0,0); }catch(e){} }
     function hideAll(){ if(projectView)projectView.style.display="none"; if(formView)formView.style.display="none"; if(statsView)statsView.style.display="none"; }
-    function showHub(){ hideAll(); if(projectView) projectView.style.display="block"; renderList(); scrollTop(); }
+    function showHub(){ hideAll(); if(projectView) projectView.style.display="block"; renderList(); if(typeof renderDrafts==="function"){ try{ renderDrafts(); }catch(e){} } if(staffPads[0]) requestAnimationFrame(function(){ staffPads[0].fit(); if(gEl("np_staff2")&&gEl("np_staff2").style.display!=="none"&&staffPads[1]) staffPads[1].fit(); }); scrollTop(); }
     function showForm(){ hideAll(); if(formView) formView.style.display="block"; var ap=byId(getActiveId()); var nm=gEl("activeProjName"); if(nm) nm.textContent=ap?label(ap):"—"; scrollTop(); }
     function showStats(id){ hideAll(); if(statsView) statsView.style.display="block"; scrollTop(); renderStats(id); }
-    function openProject(id){ setActiveId(id); recordedThisSession=false; var p=byId(id); if(p) applyBase(p); showForm(); }
+    function openProject(id){ setActiveId(id); recordedThisSession=false; currentDraftId=null; var p=byId(id); if(p) applyBase(p); showForm(); }
 
     // --- kezdőoldal: projektlista ---
     function renderList(){
@@ -1729,13 +1948,19 @@ window.IRSZ_DB = {
       var telepules=((gEl("np_telepules")||{}).value||"").trim();
       var scope=(gEl("np_scope")||{}).value||"külső";
       if(!munka && !telepules){ alert("Adja meg legalább a munka megnevezését vagy a települést."); return; }
+      var staffCount=parseInt((gEl("np_staffCount")||{}).value||"1",10)||1;
+      function sigOf(pad){ try{ return (pad&&pad.isDirty())?pad.toDataURL():""; }catch(e){ return ""; } }
+      var staff=[{ name:((gEl("np_staff1_name")||{}).value||"").trim(), sig:sigOf(staffPads[0]) }];
+      if(staffCount>=2){ staff.push({ name:((gEl("np_staff2_name")||{}).value||"").trim(), sig:sigOf(staffPads[1]) }); }
       var id="p"+Date.now();
       var projects=loadProjects();
-      projects.push({id:id, munka:munka, datum:datum, irsz:irsz, telepules:telepules, scope:scope, ts:Date.now()});
+      projects.push({id:id, munka:munka, datum:datum, irsz:irsz, telepules:telepules, scope:scope, staffCount:staffCount, staff:staff, ts:Date.now()});
       saveProjects(projects);
-      if(gEl("np_munka")) gEl("np_munka").value="";
-      if(gEl("np_irsz")) gEl("np_irsz").value="";
-      if(gEl("np_telepules")) gEl("np_telepules").value="";
+      // kezdőoldali mezők ürítése a következő projekthez
+      ["np_munka","np_irsz","np_telepules","np_staff1_name","np_staff2_name"].forEach(function(id){ if(gEl(id)) gEl(id).value=""; });
+      if(staffPads[0]) staffPads[0].clear(); if(staffPads[1]) staffPads[1].clear();
+      if(gEl("np_staffCount")) gEl("np_staffCount").value="1";
+      if(gEl("np_staff2")) gEl("np_staff2").style.display="none";
       openProject(id);
     }
 
@@ -1923,6 +2148,182 @@ window.IRSZ_DB = {
       lsSet(KEY_AUTO,"1");
       location.reload();
     });
+
+    /* ================================================================
+       TELJES JEGYZŐKÖNYV MENTÉSE / VISSZATÖLTÉSE (folytatható)
+       - alkalmazáson belül: IndexedDB (nagy méret, fotókkal is)
+       - fájlba: .json export / import
+       ================================================================ */
+    var currentDraftId=null;
+
+    // --- IndexedDB tároló ---
+    var DraftDB=(function(){
+      var DBN="jkv_drafts_v1", STORE="drafts", dbp=null;
+      function open(){
+        if(dbp) return dbp;
+        dbp=new Promise(function(res,rej){
+          try{
+            if(!window.indexedDB){ rej(new Error("Nincs IndexedDB")); return; }
+            var rq=indexedDB.open(DBN,1);
+            rq.onupgradeneeded=function(){ var db=rq.result; if(!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE,{keyPath:"id"}); };
+            rq.onsuccess=function(){ res(rq.result); };
+            rq.onerror=function(){ rej(rq.error); };
+          }catch(e){ rej(e); }
+        });
+        return dbp;
+      }
+      function tx(mode){ return open().then(function(db){ return db.transaction(STORE,mode).objectStore(STORE); }); }
+      return {
+        put:function(rec){ return tx("readwrite").then(function(st){ return new Promise(function(res,rej){ var r=st.put(rec); r.onsuccess=function(){res(rec);}; r.onerror=function(){rej(r.error);}; }); }); },
+        get:function(id){ return tx("readonly").then(function(st){ return new Promise(function(res,rej){ var r=st.get(id); r.onsuccess=function(){res(r.result);}; r.onerror=function(){rej(r.error);}; }); }); },
+        all:function(){ return tx("readonly").then(function(st){ return new Promise(function(res,rej){ var r=st.getAll(); r.onsuccess=function(){res(r.result||[]);}; r.onerror=function(){rej(r.error);}; }); }); },
+        del:function(id){ return tx("readwrite").then(function(st){ return new Promise(function(res,rej){ var r=st.delete(id); r.onsuccess=function(){res();}; r.onerror=function(){rej(r.error);}; }); }); }
+      };
+    })();
+
+    function toast(msg){
+      var t=document.createElement("div"); t.textContent=msg;
+      t.style.cssText="position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#16527F;color:#fff;padding:10px 16px;border-radius:10px;z-index:300;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:.9rem;max-width:90%;text-align:center;";
+      document.body.appendChild(t);
+      setTimeout(function(){ t.style.transition="opacity .4s"; t.style.opacity="0"; setTimeout(function(){ try{document.body.removeChild(t);}catch(e){} },400); },2600);
+    }
+
+    // --- SZERIALIZÁLÁS: a teljes űrlap tartalma egy objektumba ---
+    function serializeForm(){
+      function v(id){ var e=gEl(id); return e?(e.value!=null?e.value:""):""; }
+      var chips=[];
+      Array.prototype.forEach.call(document.querySelectorAll("#formSheet .chip"),function(c){ chips.push(c.getAttribute("aria-pressed")==="true"?1:0); });
+      var photos=[];
+      if(window.PhotoAPI){ window.PhotoAPI.syncDescs();
+        Array.prototype.forEach.call(window.PhotoAPI.cards(),function(card){
+          var im=card.querySelector("img.shot"), ta=card.querySelector("textarea"), g=card.querySelector(".gps-line");
+          var src=im?(im.getAttribute("src")||""):""; if(src.indexOf("data:")!==0) src="";
+          var la=g?parseFloat(g.getAttribute("data-lat")):NaN, lo=g?parseFloat(g.getAttribute("data-lon")):NaN;
+          photos.push({ img:src, desc:ta?ta.value:"", gps:{ lat:isFinite(la)?la:null, lon:isFinite(lo)?lo:null, html:g?g.innerHTML:"" } });
+        });
+      }
+      function items(sk){ try{ return sk?sk.getItems():[]; }catch(e){ return []; } }
+      function thumb(id){ var e=gEl(id); return (e && e.style.display!=="none")?(e.getAttribute("src")||""):""; }
+      return {
+        v:2, ts:Date.now(),
+        base:{ munka:getMunka(), datum:v("datum"), irsz:v("iszInput"), telepules:v("telepulesInput"), scope:v("scopeSelect") },
+        addr:{ utca:v("utcaInput"), hazszam:v("hazszamInput") },
+        fields:{ szint:v("szintInput"), alap:v("alapInput"), felv:v("felvInput"),
+                 epuletEgyeb:v("epuletEgyebInput"), burkolatEgyeb:v("burkolatEgyebInput"),
+                 photoNotes:v("photoNotes"), generalNotes:v("generalNotes"),
+                 ownerRole:v("ownerRole"), ownerName:v("ownerName"), ownerConsent:v("ownerConsent") },
+        chips:chips,
+        dd:{ epuletJellege:(window.DropdownAPI?window.DropdownAPI.get("epuletJellege"):[]), burkolat:(window.DropdownAPI?window.DropdownAPI.get("burkolat"):[]) },
+        floor:items(floorSketch), ownerSign:items(ownerSign),
+        floorThumb:thumb("floorThumb"),
+        photos:photos
+      };
+    }
+
+    // --- VISSZATÖLTÉS: objektum -> űrlap ---
+    function setSketchThumb(thumbId,phId,miniId,src){
+      var thumb=gEl(thumbId),ph=gEl(phId),mini=gEl(miniId); if(!thumb) return;
+      if(src){ thumb.src=src; thumb.style.display="block"; if(ph)ph.style.display="none"; if(mini)mini.style.display="flex"; }
+      else { thumb.removeAttribute("src"); thumb.style.display="none"; if(ph)ph.style.display="block"; if(mini)mini.style.display="none"; }
+    }
+    function applyForm(d){
+      if(!d) return;
+      function set(id,val){ var e=gEl(id); if(e) e.value=(val!=null?val:""); }
+      if(d.base){ setMunka(d.base.munka); set("datum",d.base.datum); set("iszInput",d.base.irsz); set("telepulesInput",d.base.telepules); if(gEl("scopeSelect")&&d.base.scope) gEl("scopeSelect").value=d.base.scope; }
+      if(d.addr){ set("utcaInput",d.addr.utca); set("hazszamInput",d.addr.hazszam); }
+      if(d.fields){ var f=d.fields; set("szintInput",f.szint); set("alapInput",f.alap); set("felvInput",f.felv); set("epuletEgyebInput",f.epuletEgyeb); set("burkolatEgyebInput",f.burkolatEgyeb); set("photoNotes",f.photoNotes); set("generalNotes",f.generalNotes); if(gEl("ownerRole")&&f.ownerRole) gEl("ownerRole").value=f.ownerRole; set("ownerName",f.ownerName); if(gEl("ownerConsent")&&f.ownerConsent) gEl("ownerConsent").value=f.ownerConsent; }
+      if(window.DropdownAPI){ window.DropdownAPI.set("epuletJellege", (d.dd&&d.dd.epuletJellege)||[]); window.DropdownAPI.set("burkolat", (d.dd&&d.dd.burkolat)||[]); }
+      try{ if(floorSketch){ floorSketch.setItems(d.floor||[]); } }catch(e){}
+      setSketchThumb("floorThumb","floorPh","floorMini", d.floorThumb||"");
+      try{ if(ownerSign){ ownerSign.setItems(d.ownerSign||[]); requestAnimationFrame(function(){ try{ ownerSign.fit(); }catch(e){} }); } }catch(e){}
+      if(window.PhotoAPI){ window.PhotoAPI.clearAll(); (d.photos||[]).forEach(function(p){ window.PhotoAPI.add(p.img||"", p.desc||"", p.gps||null); }); }
+    }
+
+    function draftTitle(d){
+      var a=[ (d.base&&d.base.telepules)||"", (((d.addr&&d.addr.utca)||"")+" "+((d.addr&&d.addr.hazszam)||"")).trim() ].filter(Boolean).join(", ");
+      var m=(d.base&&d.base.munka)||"";
+      return (m?m+" — ":"")+(a||"(cím nélkül)");
+    }
+
+    function loadDraft(rec){
+      if(!rec) return;
+      var d=rec.data||{};
+      currentDraftId=rec.id||("d"+Date.now());
+      if(rec.projId && byId(rec.projId)){ setActiveId(rec.projId); recordedThisSession=false; applyBase(byId(rec.projId)); }
+      showForm();
+      var nm=gEl("activeProjName"); if(nm){ var ap=byId(getActiveId()); if(!ap) nm.textContent=draftTitle(d); }
+      setTimeout(function(){ applyForm(d); toast("Jegyzőkönyv betöltve — folytathatja."); }, 80);
+    }
+
+    function saveDraft(){
+      var d=serializeForm();
+      var id=currentDraftId||("d"+Date.now()+Math.floor(Math.random()*1000));
+      currentDraftId=id;
+      var rec={ id:id, projId:getActiveId()||"", title:draftTitle(d), ts:Date.now(), data:d };
+      DraftDB.put(rec).then(function(){ toast("Jegyzőkönyv elmentve — a kezdőoldal Mentett jegyzőkönyvek listájából folytatható."); })
+        .catch(function(e){ alert("A mentés nem sikerült ebben a böngészőben: "+((e&&e.message)||e)+". Használja az Exportálás fájlba lehetőséget."); });
+    }
+
+    function recForExport(){
+      var d=serializeForm();
+      return { app:"t7-jkv", ver:2, id:currentDraftId||("d"+Date.now()), projId:getActiveId()||"", title:draftTitle(d), ts:Date.now(), data:d };
+    }
+    function downloadJSON(rec){
+      try{
+        var blob=new Blob([JSON.stringify(rec)],{type:"application/json"});
+        var url=URL.createObjectURL(blob);
+        var a=document.createElement("a"); a.href=url; a.download=(sanitizeFile(rec.title||"jegyzokonyv")||"jegyzokonyv")+".json";
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); },8000);
+      }catch(e){ alert("Az exportálás nem sikerült: "+((e&&e.message)||e)); }
+    }
+    function exportFile(){ var rec=recForExport(); currentDraftId=rec.id; downloadJSON(rec); toast("Jegyzőkönyv exportálva (.json)."); }
+
+    function importFile(file){
+      var r=new FileReader();
+      r.onload=function(){
+        var rec; try{ rec=JSON.parse(r.result); }catch(e){ alert("A fájl nem érvényes jegyzőkönyv (.json)."); return; }
+        if(!rec || !rec.data){ alert("A fájl nem tartalmaz jegyzőkönyv-adatot."); return; }
+        rec.id=rec.id||("d"+Date.now());
+        DraftDB.put(rec).then(function(){ renderDrafts(); loadDraft(rec); }).catch(function(){ loadDraft(rec); });
+      };
+      r.readAsText(file);
+    }
+
+    // --- kezdőoldali „Mentett jegyzőkönyvek" lista ---
+    function renderDrafts(){
+      var box=gEl("draftList"); if(!box || !DraftDB) return;
+      DraftDB.all().then(function(list){
+        list.sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+        if(!list.length){ box.innerHTML='<div class="proj-empty">Még nincs mentett jegyzőkönyv. Az űrlapon a „💾 Mentés (folytatható)" gombbal menthet, vagy töltsön be egy .json fájlt.</div>'; return; }
+        box.innerHTML=list.map(function(r){
+          var meta=[]; if(r.ts) meta.push(new Date(r.ts).toLocaleString("hu-HU"));
+          var np=(r.data&&r.data.photos&&r.data.photos.length)||0; meta.push(np+" fotó");
+          return '<div class="proj-card"><div class="proj-info">'+
+            '<div class="proj-name">'+esc(r.title||"(névtelen)")+'</div>'+
+            '<div class="proj-meta">'+esc(meta.join(" · "))+'</div></div>'+
+            '<div class="proj-actions">'+
+            '<button type="button" class="primary act-draft-open" data-id="'+esc(r.id)+'">Folytatás</button>'+
+            '<button type="button" class="ghost act-draft-exp" data-id="'+esc(r.id)+'">⬇️ Export</button>'+
+            '<button type="button" class="danger act-draft-del" data-id="'+esc(r.id)+'">Törlés</button></div></div>';
+        }).join("");
+        Array.prototype.forEach.call(box.querySelectorAll(".act-draft-open"),function(b){ b.addEventListener("click",function(){ DraftDB.get(b.getAttribute("data-id")).then(function(rec){ if(rec) loadDraft(rec); }); }); });
+        Array.prototype.forEach.call(box.querySelectorAll(".act-draft-exp"),function(b){ b.addEventListener("click",function(){ DraftDB.get(b.getAttribute("data-id")).then(function(rec){ if(rec) downloadJSON(rec); }); }); });
+        Array.prototype.forEach.call(box.querySelectorAll(".act-draft-del"),function(b){ b.addEventListener("click",function(){ if(!confirm("Törli ezt a mentett jegyzőkönyvet?")) return; DraftDB.del(b.getAttribute("data-id")).then(renderDrafts); }); });
+      }).catch(function(){ box.innerHTML='<div class="proj-empty">A mentett jegyzőkönyvek nem elérhetők ebben a böngészőben (IndexedDB letiltva). Használja a fájl-exportot/importot.</div>'; });
+    }
+
+    // --- gombok bekötése ---
+    if(gEl("saveDraftBtn")) gEl("saveDraftBtn").addEventListener("click",saveDraft);
+    if(gEl("exportFileBtn")) gEl("exportFileBtn").addEventListener("click",exportFile);
+    if(gEl("importFileBtn")) gEl("importFileBtn").addEventListener("click",function(){ var i=gEl("importFileInput"); if(i){ i.value=""; i.click(); } });
+    if(gEl("importFileInput")) gEl("importFileInput").addEventListener("change",function(){ var f=this.files&&this.files[0]; if(f) importFile(f); });
+    // nyomtatás előtt: fotó-leírások print-tükrének frissítése + „vannak fotók" jelző a tiszta tördeléshez
+    function prepPrint(){ if(window.PhotoAPI){ window.PhotoAPI.syncDescs(); var has=window.PhotoAPI.cards().length>0; document.body.classList.toggle("print-has-photos",has); } }
+    window.addEventListener("beforeprint",prepPrint);
+    window.addEventListener("afterprint",function(){ document.body.classList.remove("print-has-photos"); });
+    // a printBtn is nyomtat (window.print) — előtte készítsük elő
+    if(gEl("printBtn")) gEl("printBtn").addEventListener("click",prepPrint);
 
     // logó átemelése a kezdőoldal és a statisztika fejlécébe (a nagy base64 duplikálása nélkül)
     try{ var fl=document.querySelector("#formSheet .logo"); if(fl){ if(gEl("hubLogo")) gEl("hubLogo").src=fl.src; if(gEl("statsLogo")) gEl("statsLogo").src=fl.src; } }catch(e){}
